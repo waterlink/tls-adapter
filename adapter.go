@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/Shopify/sarama"
 	"github.com/huin/mqtt"
-	"net"
 	"log"
+	"net"
 )
 
 const kafkaPort = 9092
@@ -21,7 +21,7 @@ func obtainListener(port string) (net.Listener, error) {
 func qosFromTopics(topics []mqtt.TopicQos) (topicsQos []mqtt.QosLevel) {
 	topicsQos = make([]mqtt.QosLevel, len(topics))
 	for index, topic := range topics {
-		topicsQos[index] = topic.Qos;
+		topicsQos[index] = topic.Qos
 	}
 	return topicsQos
 }
@@ -58,9 +58,9 @@ func handleClient(conn net.Conn, kafkaBrokers []string, kafkaConfig *sarama.Conf
 			log.Print("got Connect, gonna send ConnAck")
 			msg := &mqtt.ConnAck{
 				Header: mqtt.Header{
-					DupFlag: false,
+					DupFlag:  false,
 					QosLevel: mqtt.QosAtLeastOnce,
-					Retain: false,
+					Retain:   false,
 				},
 				ReturnCode: mqtt.ReturnCode(mqtt.RetCodeAccepted),
 			}
@@ -72,7 +72,7 @@ func handleClient(conn net.Conn, kafkaBrokers []string, kafkaConfig *sarama.Conf
 			log.Print("got Subscribe, gonna send SubAck")
 			log.Print(message)
 			msg := &mqtt.SubAck{
-				Header: message.Header,
+				Header:    message.Header,
 				MessageId: message.MessageId,
 				TopicsQos: qosFromTopics(message.Topics),
 			}
@@ -113,10 +113,10 @@ func handleClient(conn net.Conn, kafkaBrokers []string, kafkaConfig *sarama.Conf
 							log.Print(string(kafkaMessage.Value))
 							dataToSend := string(kafkaMessage.Value)
 							msg2 := &mqtt.Publish{
-								Header: message.Header,
+								Header:    message.Header,
 								TopicName: topicName,
 								MessageId: 10,
-								Payload: mqtt.BytesPayload(dataToSend),
+								Payload:   mqtt.BytesPayload(dataToSend),
 							}
 							if err := msg2.Encode(conn); err != nil {
 								log.Print(err)
@@ -160,7 +160,7 @@ func handleClient(conn net.Conn, kafkaBrokers []string, kafkaConfig *sarama.Conf
 			log.Print(message)
 			//kafkaMessage := &ProducerMessage{
 			//	Topic: message.Topic,
-			//	
+			//
 			//}
 
 		case *mqtt.PubAck:
@@ -188,7 +188,7 @@ func handleClient(conn net.Conn, kafkaBrokers []string, kafkaConfig *sarama.Conf
 
 func main() {
 	listener, err := obtainListener(":2000")
-    if err != nil {
+	if err != nil {
 		return
 	}
 	defer listener.Close()
